@@ -1,15 +1,29 @@
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 
-// Project Data (In a real app, this could be imported from a data.js file)
+// Import Jewelry images (Make sure filenames match exactly in your src/asset folder)
+import jewelry1 from "../assets/Jewelry 1.png"; // Change extension (.png/.jpg) if needed
+import jewelry2 from "../assets/Jewelry 2.png";
+import jewelry3 from "../assets/Jewelry 3.png";
+
+// Import Online Game images
+import game1 from "../assets/Online Game 1.png"; // Change extension (.png/.jpg) if needed
+import game2 from "../assets/Online Game 2.png";
+import game3 from "../assets/Online Game 3.png";
+import game4 from "../assets/Online Game 4.png";
+import game5 from "../assets/Online Game 5.png";
+
+// Project Data with respective image arrays
 const projectsData = {
   jewelry: {
     title: "Jewelry Product Management & Customer Chat",
     tech: ["React", "Vite", "Node.js", "WebSocket", "MongoDB", "MongoDB Atlas", "Render"],
-    live: "https://pw-r.github.io/Jewery/Home",
-    github: "https://github.com/PKlated", // Update with exact repo link later
+    live: "https://pw-r.github.io/Jewery/",
+    github: "https://github.com/PKlated",
+    images: [jewelry1, jewelry2, jewelry3],
     features: [
       "พัฒนาหน้าเว็บไซต์สำหรับให้ผู้ใช้งานดูข้อมูลและสินค้าที่มีอยู่ภายในร้าน",
       "พัฒนาระบบ Real-time Chat ด้วย WebSocket เพื่อให้ลูกค้าสามารถติดต่อกับร้านค้าผ่านเว็บไซต์",
@@ -21,8 +35,9 @@ const projectsData = {
   "game-ecom": {
     title: "Online Game E-Commerce",
     tech: ["ASP.NET / .NET Framework", "MySQL", "Docker"],
-    live: null, // No live link provided
-    github: "https://github.com/PKlated",
+    live: null,
+    github: "https://github.com/pkk51862-web/Topupweb",
+    images: [game1, game2, game3, game4, game5],
     features: [
       "พัฒนาระบบ Login สำหรับผู้ใช้งานและระบบซื้อสินค้าเกมผ่านเว็บไซต์",
       "พัฒนา Backend และระบบ Admin สำหรับจัดการข้อมูลสินค้าและบัญชีผู้ใช้งาน",
@@ -41,6 +56,20 @@ const fadeUp = {
 export default function Project() {
   const { id } = useParams();
   const project = projectsData[id];
+
+  // State for constant auto slideshow
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    if (!project || !project.images || project.images.length === 0) return;
+
+    // Change slide every 3.5 seconds automatically
+    const timer = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % project.images.length);
+    }, 3500);
+
+    return () => clearInterval(timer);
+  }, [project]);
 
   if (!project) {
     return (
@@ -62,15 +91,39 @@ export default function Project() {
         </Link>
       </motion.div>
 
-      {/* Hero Banner (Placeholder for your high-quality image) */}
+      {/* Hero Banner with Constant Auto-Slideshow */}
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }} 
         animate={{ opacity: 1, scale: 1, transition: { duration: 0.8 } }}
-        className="max-w-6xl mx-auto h-64 md:h-[400px] bg-gray-900 border border-white/10 rounded-2xl flex items-center justify-center mb-16 overflow-hidden relative group"
+        className="max-w-6xl mx-auto h-64 md:h-[450px] bg-gray-900 border border-white/10 rounded-2xl flex items-center justify-center mb-16 overflow-hidden relative group"
       >
-        <span className="text-gray-500 text-lg group-hover:scale-110 transition-transform duration-500">
-          [ Insert Project Mockup / Screenshot Here ]
-        </span>
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={currentImageIndex}
+            src={project.images[currentImageIndex]}
+            alt={`${project.title} slide ${currentImageIndex + 1}`}
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.6 }}
+            className="w-full h-full object-cover absolute inset-0"
+          />
+        </AnimatePresence>
+
+        {/* Slide Indicators (Dots at the bottom) */}
+        <div className="absolute bottom-4 z-10 flex gap-2">
+          {project.images.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentImageIndex(idx)}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                currentImageIndex === idx ? "w-6 bg-green-400" : "w-2 bg-white/50 hover:bg-white"
+              }`}
+              aria-label={`Slide ${idx + 1}`}
+            />
+          ))}
+        </div>
+
         {/* Glow effect behind banner */}
         <div className="absolute inset-0 bg-blue-500/5 blur-[100px] pointer-events-none"></div>
       </motion.div>
