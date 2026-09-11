@@ -22,7 +22,7 @@ const projectsData = {
     title: "Jewelry Product Management & Customer Chat",
     tech: ["React", "Vite", "Node.js", "WebSocket", "MongoDB", "MongoDB Atlas", "Render"],
     live: "https://pw-r.github.io/Jewery/",
-    github: "https://github.com/PKlated",
+    github: "https://github.com/PW-R/Jewery",
     images: [jewelry1, jewelry2, jewelry3],
     features: [
       "พัฒนาหน้าเว็บไซต์สำหรับให้ผู้ใช้งานดูข้อมูลและสินค้าที่มีอยู่ภายในร้าน",
